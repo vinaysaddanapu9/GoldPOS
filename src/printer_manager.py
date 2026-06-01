@@ -1,9 +1,22 @@
 from tkinter import messagebox
 import win32print
+import os
+import json
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
+
+def get_printer_name():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("printer_name", "")
+    return ""
 
 #FOR USB PRINT
 
-PRINTER_NAME = "XP-80C (copy 4)"
+PRINTER_NAME = get_printer_name()
+#PRINTER_NAME = "XP-80C (copy 4)"
 
 def print_usb(receipt_text):
 
