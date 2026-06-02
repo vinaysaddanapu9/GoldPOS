@@ -1,7 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox
+from datetime import datetime
 from printer_manager import test_print
+from receipt_manager import get_next_receipt_number
 
+
+today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 
 class GoldCalcTab:
     def __init__(self, frame):
@@ -126,9 +130,11 @@ class GoldCalcTab:
     # ---------------- RECEIPT ---------------- #
     def build_print_text(self, subtotal, sub, total, rate, value):
         text = "\n"
-        text += "================================\n"
+        text += "=======================================\n"
         text += "   SSJ ROUGH ESTIMATE \n"
-        text += "================================\n\n"
+        text += "=======================================\n\n"
+        text += "Receipt No : " + get_next_receipt_number("GLD") + "\n"
+        text += "Date : " + today + "\n\n"
 
         for i, row in enumerate(self.rows, start=1):
             try:
@@ -140,13 +146,13 @@ class GoldCalcTab:
             except:
                 pass
 
-        text += "\n--------------------------------\n"
+        text += "\n-------------------------------------\n"
         text += f"{'Subtotal':<18}: {subtotal:>10.3f} g\n"
 
         if sub > 0:
             text += f"{'Subtraction':<18}: -{sub:>9.3f} g\n"
 
-        text += "--------------------------------\n"
+        text += "-------------------------------------\n"
         text += f"{'FINAL TOTAL':<18}: {total:>10.3f} g\n"
 
         # OPTIONAL GOLD VALUE
@@ -154,9 +160,10 @@ class GoldCalcTab:
             text += f"{'Gold Rate':<18}: {rate:>10.2f} /g\n"
             text += f"{'Total Value':<18}: {value:>10.2f}\n"
 
-        text += "================================\n"
-        text += "     Thank You Visit Again!!\n"
-        text += "================================\n"
+        text += "====================================\n"
+        text += "     Thank You! Visit Again! \n"
+        text += "     Powered by GoldPOS \n"
+        text += "====================================\n"
 
         return text
 

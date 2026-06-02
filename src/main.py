@@ -1,4 +1,5 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
 from tabs import AppTabs
@@ -6,6 +7,7 @@ from about import AboutTab
 from printer_manager import print_bt, test_print
 from gold_rate_widget import create_gold_rate_ui
 from gold_calc_tab import GoldCalcTab
+from receipt_manager import get_next_receipt_number
 import ctypes
 import os
 
@@ -23,20 +25,6 @@ last_values = None
 
 def get_receipt_text():
     return receipt_box.get("1.0", "end-1c")
-
-# ---------------- RECEIPT NUMBER ---------------- #
-def get_next_receipt_number():
-    if not os.path.exists(RECEIPT_FILE):
-        with open(RECEIPT_FILE, "w") as f:
-            f.write("1")
-
-    with open(RECEIPT_FILE, "r") as f:
-        number = int(f.read().strip())
-
-    with open(RECEIPT_FILE, "w") as f:
-        f.write(str(number + 1))
-
-    return number
 
 
 # ---------------- CALCULATE ---------------- #
@@ -88,10 +76,10 @@ def calculate_and_show():
             text=f"Today's Cash : ₹ {total_cash:.2f}"
         )
 
-        receipt_no = get_next_receipt_number()
+        receipt_no = get_next_receipt_number("EXC")
 
         today = datetime.now().strftime(
-            "%d-%m-%Y %H:%M"
+            "%d-%m-%Y %I:%M:%S %p"
         )
 
         latest_receipt = f"""
@@ -113,18 +101,19 @@ Rate/Gram  : Rs. {rate:.2f}
 TOTAL      : Rs. {price:.2f}
 
 ================================
-   Thank You Visit Again!!
+   Thank You! Visit Again!
+   Powered by GoldPOS
 ================================
 """
 
         # Show receipt
-        receipt_box.config(state=NORMAL)
-        receipt_box.delete("1.0", END)
+        receipt_box.config(state= tk.NORMAL)
+        receipt_box.delete("1.0", tk.END)
         receipt_box.insert(
-            END,
+            tk.END,
             latest_receipt
         )
-        receipt_box.config(state=DISABLED)
+        receipt_box.config(state= tk.DISABLED)
 
         # remember last calculation
         last_values = current_values
@@ -144,13 +133,13 @@ def clear_entries():
 
     last_values = None
 
-    entry_weight.delete(0, END)
-    entry_purity.delete(0, END)
-    entry_rate.delete(0, END)
+    entry_weight.delete(0, tk.END)
+    entry_purity.delete(0, tk.END)
+    entry_rate.delete(0, tk.END)
 
-    receipt_box.config(state=NORMAL)
-    receipt_box.delete("1.0", END)
-    receipt_box.config(state=DISABLED)
+    receipt_box.config(state= tk.NORMAL)
+    receipt_box.delete("1.0", tk.END)
+    receipt_box.config(state= tk.DISABLED)
 
     latest_receipt = ""
 
@@ -161,13 +150,15 @@ def clear_entries():
 def exit_app():
     root.destroy()
 
-
 # ---------------- MAIN WINDOW ---------------- #
 myapp_id = "GoldPOS.app.v1"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myapp_id)
 
-root = Tk()
+root = tk.Tk()
 icon_path = os.path.abspath("GoldPOS.ico")
+
+style = ttk.Style()
+style.theme_use("clam")
 
 root.title("GoldPOS v0.0.1")
 root.iconbitmap(icon_path)
@@ -188,20 +179,20 @@ create_gold_rate_ui(home)
 # ---------------- TOTALS ---------------- #
 total_gold, total_cash = get_daily_totals()
 
-total_gold_label = Label(
+total_gold_label = tk.Label(
     home,
     text=f"Today's Gold Exchange : {total_gold:.3f} g",
-    font=("Arial", 11, "bold"),
+    font=("Segoe UI", 11, "bold"),
     bg="#f4f1ea",
     fg="#333333"
 )
 
 total_gold_label.pack()
 
-total_cash_label = Label(
+total_cash_label = tk.Label(
     home,
     text=f"Today's Cash : ₹ {total_cash:.2f}",
-    font=("Arial", 11, "bold"),
+    font=("Segoe UI", 11, "bold"),
     bg="#f4f1ea",
     fg="green"
 )
@@ -210,9 +201,8 @@ total_cash_label.pack(
     pady=(0, 10)
 )
 
-
 # ---------------- INPUT FRAME ---------------- #
-input_frame = Frame(
+input_frame = tk.Frame(
     home,
     bg="#f8f5ef"
 )
@@ -221,23 +211,23 @@ input_frame.pack(pady=10)
 
 
 # Weight
-Label(
+tk.Label(
     input_frame,
     text="Impure Gold Weight (g)",
-    font=("Arial", 11),
+    font=("Segoe UI", 11),
     bg="#f8f5ef"
 ).grid(
     row=0,
     column=0,
     padx=10,
     pady=10,
-    sticky=W
+    sticky=tk.W
 )
 
-entry_weight = Entry(
+entry_weight = tk.Entry(
     input_frame,
     width=20,
-    font=("Arial", 11)
+    font=("Segoe UI", 11)
 )
 
 entry_weight.grid(
@@ -248,23 +238,23 @@ entry_weight.grid(
 
 
 # Purity
-Label(
+tk.Label(
     input_frame,
     text="Purity %",
-    font=("Arial", 11),
+    font=("Segoe UI", 11),
     bg="#f8f5ef"
 ).grid(
     row=1,
     column=0,
     padx=10,
     pady=10,
-    sticky=W
+    sticky=tk.W
 )
 
-entry_purity = Entry(
+entry_purity = tk.Entry(
     input_frame,
     width=20,
-    font=("Arial", 11)
+    font=("Segoe UI", 11)
 )
 
 entry_purity.grid(
@@ -275,23 +265,23 @@ entry_purity.grid(
 
 
 # Rate
-Label(
+tk.Label(
     input_frame,
     text="Rate per Gram",
-    font=("Arial", 11),
+    font=("Segoe UI", 11),
     bg="#f8f5ef"
 ).grid(
     row=2,
     column=0,
     padx=10,
     pady=10,
-    sticky=W
+    sticky=tk.W
 )
 
-entry_rate = Entry(
+entry_rate = tk.Entry(
     input_frame,
     width=20,
-    font=("Arial", 11)
+    font=("Segoe UI", 11)
 )
 
 entry_rate.grid(
@@ -321,7 +311,7 @@ entry_weight.focus()
 
 
 # ---------------- BUTTONS ---------------- #
-button_frame = Frame(
+button_frame = tk.Frame(
     home,
     bg="#f8f5ef"
 )
@@ -329,7 +319,7 @@ button_frame = Frame(
 button_frame.pack(pady=15)
 
 
-Button(
+tk.Button(
     button_frame,
     text="Calculate",
     width=15,
@@ -345,7 +335,7 @@ Button(
 )
 
 #Clear
-Button(
+tk.Button(
     button_frame,
     text="Clear",
     width=15,
@@ -359,7 +349,7 @@ Button(
 )
 
 # Print USB
-Button(
+tk.Button(
     button_frame,
     text="Print USB",
     width=15,
@@ -375,7 +365,7 @@ Button(
 )
 
 # Print Bluetooth
-Button(
+tk.Button(
     button_frame,
     text="Print BT",
     width=15,
@@ -391,11 +381,11 @@ Button(
 )
 
 #Exit
-Button(
+tk.Button(
     button_frame,
     text="Exit",
     width=32,
-    bg="red",
+    bg="#C62828",
     fg="white",
     font=("Arial", 10, "bold"),
     command=exit_app
@@ -407,14 +397,14 @@ Button(
 )
 
 # ---------------- RECEIPT BOX ---------------- #
-Label(
+tk.Label(
     home,
     text="Receipt Preview",
-    font=("Arial", 12, "bold"),
+    font=("Segoe UI", 12, "bold"),
     bg="#f8f5ef"
 ).pack()
 
-receipt_frame = Frame(
+receipt_frame = tk.Frame(
     home,
     bg="#f4f1ea"
 )
@@ -422,33 +412,33 @@ receipt_frame = Frame(
 receipt_frame.pack(
     padx=10,
     pady=10,
-    fill=BOTH,
+    fill=tk.BOTH,
     expand=True
 )
 
-scrollbar = Scrollbar(
+scrollbar = tk.Scrollbar(
     receipt_frame
 )
 
 scrollbar.pack(
-    side=RIGHT,
-    fill=Y
+    side=tk.RIGHT,
+    fill=tk.Y
 )
 
-receipt_box = Text(
+receipt_box = tk.Text(
     receipt_frame,
     width=60,
     height=20,
     bg="#fffdf8",
     font=("Courier New", 10),
     yscrollcommand=scrollbar.set,
-    relief=SOLID,
+    relief=tk.SOLID,
     bd=1
 )
 
 receipt_box.pack(
-    side=LEFT,
-    fill=BOTH,
+    side=tk.LEFT,
+    fill=tk.BOTH,
     expand=True
 )
 
@@ -457,7 +447,7 @@ scrollbar.config(
 )
 
 receipt_box.config(
-    state=DISABLED
+    state=tk.DISABLED
 )
 
 # ---------------- RUN ---------------- #

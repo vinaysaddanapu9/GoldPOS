@@ -3,6 +3,10 @@ from tkinter import ttk
 
 class AppTabs:
     def __init__(self, root):
+
+        style = ttk.Style()
+        style.theme_use("clam")
+
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(expand=True, fill="both")
 

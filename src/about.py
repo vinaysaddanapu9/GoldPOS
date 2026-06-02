@@ -58,7 +58,7 @@ and reduces manual calculation errors.
         tk.Label(
             self.frame,
             text=text,
-            font=("Arial", 11),
+            font=("Segoe UI", 11),
             justify="left",
             wraplength=500
         ).pack(padx=20, pady=10)
