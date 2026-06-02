@@ -1,14 +1,9 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RECEIPT_FILE = os.path.join(BASE_DIR, "receipt_number.txt")
+RECEIPT_FILE = os.path.join(BASE_DIR, "receipt_counter.txt")
 
 # ---------------- RECEIPT NUMBER ---------------- #
-
-import os
-
-RECEIPT_FILE = "receipt_counter.txt"
-
 def get_next_receipt_number(receipt_type):
     # Create file if missing
     if not os.path.exists(RECEIPT_FILE):
