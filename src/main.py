@@ -155,13 +155,16 @@ myapp_id = "GoldPOS.app.v1"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myapp_id)
 
 root = tk.Tk()
-icon_path = os.path.abspath("GoldPOS.ico")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ico_path = os.path.join(BASE_DIR, "..", "assets", "goldpos.ico")
+
+root.iconbitmap(ico_path)
 
 style = ttk.Style()
 style.theme_use("clam")
 
 root.title("GoldPOS v0.0.1")
-root.iconbitmap(icon_path)
 root.geometry("520x650")
 
 root.configure(bg="#f8f5ef")
