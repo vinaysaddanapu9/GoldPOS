@@ -11,7 +11,7 @@ A Python Tkinter-based desktop application for gold calculation and billing with
 - Clean POS-style UI
 
 ## 🛠️ Tech Stack
-- Python
+- Python 3.11.5
 - Tkinter
 - ESC/POS Printing
 
