@@ -51,8 +51,8 @@ GoldPOS is a Jewellery Billing System designed for small and medium shops.
 ✔ Supports USB thermal printer printing
 ✔ Supports Bluetooth printer printing
 
-This system helps simplify jewellery billing operations
-and reduces manual calculation errors.
+Fast and Accurate Gold Exchange & Billing Software
+Designed for Jewellery Shops
         """
 
         tk.Label(
