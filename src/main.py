@@ -5,9 +5,11 @@ from datetime import datetime
 from tabs import AppTabs
 from about import AboutTab
 from printer_manager import print_bt, test_print
+from printer_manager_bt import print_receipt
 from gold_rate_widget import create_gold_rate_ui
 from gold_calc_tab import GoldCalcTab
 from receipt_manager import get_next_receipt_number
+from utils.paths import asset_path
 import ctypes
 import os
 
@@ -155,16 +157,13 @@ myapp_id = "GoldPOS.app.v1"
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myapp_id)
 
 root = tk.Tk()
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ico_path = os.path.join(BASE_DIR, "..", "assets", "goldpos.ico")
-
-root.iconbitmap(ico_path)
+icon_path = os.path.abspath("GoldPOS.ico")
 
 style = ttk.Style()
 style.theme_use("clam")
 
 root.title("GoldPOS v0.0.1")
+root.iconbitmap(icon_path)
 root.geometry("520x650")
 
 root.configure(bg="#f8f5ef")
@@ -239,7 +238,6 @@ entry_weight.grid(
     padx=10
 )
 
-
 # Purity
 tk.Label(
     input_frame,
@@ -293,7 +291,6 @@ entry_rate.grid(
     padx=10
 )
 
-
 # Focus movement
 entry_weight.bind(
     "<Return>",
@@ -320,7 +317,6 @@ button_frame = tk.Frame(
 )
 
 button_frame.pack(pady=15)
-
 
 tk.Button(
     button_frame,
@@ -375,7 +371,7 @@ tk.Button(
     bg="#005A9C",
     fg="black",
     font=("Arial", 10, "bold"),
-    command=lambda: print_bt(latest_receipt)
+    command=lambda: print_receipt(latest_receipt)
 ).grid(
     row=1,
     column=1,
