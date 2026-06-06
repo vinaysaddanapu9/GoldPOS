@@ -15,10 +15,19 @@ def get_printer_name():
 
 #FOR USB PRINT
 
-PRINTER_NAME = get_printer_name()
+#PRINTER_NAME = get_printer_name()
 #PRINTER_NAME = "XP-80C (copy 4)"
 
 def print_usb(receipt_text):
+
+    printer_name = get_printer_name()
+
+    if not printer_name:
+        messagebox.showerror(
+            "Printer",
+            "No printer configured"
+        )
+        return
 
     if not receipt_text.strip():
 
@@ -32,7 +41,7 @@ def print_usb(receipt_text):
     try:
 
         hprinter = win32print.OpenPrinter(
-            PRINTER_NAME
+            printer_name
         )
 
         try:
@@ -96,21 +105,40 @@ def print_usb(receipt_text):
 def test_print(receipt_data):
 
     sample = """
-========================
-       GOLDPOS
-========================
+    ========================
+           GOLDPOS
+    ========================
 
-Thermal Test
+    Printer Test
 
-Weight : 12.500 g
-Rate   : 9850
+    GoldPOS v0.1.0
 
-Total  : 123125
+    Printer Working OK
 
-========================
-"""
+    ========================
+    """
 
     print_usb(receipt_data)
 
 def print_bt(receipt_text):
     print_usb(receipt_text)
+
+
+def is_printer_available(printer_name=None):
+
+    if not printer_name:
+        printer_name = get_printer_name()
+
+    try:
+        printers = [
+            p[2]
+            for p in win32print.EnumPrinters(
+                win32print.PRINTER_ENUM_LOCAL
+                | win32print.PRINTER_ENUM_CONNECTIONS
+            )
+        ]
+
+        return printer_name in printers
+
+    except Exception:
+        return False

@@ -4,12 +4,10 @@ from tkinter import messagebox
 from datetime import datetime
 from tabs import AppTabs
 from about import AboutTab
-from printer_manager import print_bt, test_print
-from printer_manager_bt import print_receipt
+from printer_manager import test_print
 from gold_rate_widget import create_gold_rate_ui
 from gold_calc_tab import GoldCalcTab
 from receipt_manager import get_next_receipt_number
-from utils.paths import asset_path
 import ctypes
 import os
 
@@ -363,35 +361,19 @@ tk.Button(
     pady=5
 )
 
-# Print Bluetooth
-tk.Button(
-    button_frame,
-    text="Print BT",
-    width=15,
-    bg="#005A9C",
-    fg="black",
-    font=("Arial", 10, "bold"),
-    command=lambda: print_receipt(latest_receipt)
-).grid(
-    row=1,
-    column=1,
-    padx=5,
-    pady=5
-)
-
 #Exit
 tk.Button(
     button_frame,
     text="Exit",
-    width=32,
+    width=15,
     bg="#C62828",
     fg="white",
     font=("Arial", 10, "bold"),
     command=exit_app
 ).grid(
-    row=2,
-    column=0,
-    columnspan=2,
+    row=1,
+    column=1,
+    padx=5,
     pady=5
 )
 

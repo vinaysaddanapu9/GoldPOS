@@ -129,7 +129,7 @@ class GoldCalcTab:
 
     # ---------------- RECEIPT ---------------- #
     def build_print_text(self, subtotal, sub, total, rate, value):
-        text = "\n"
+        text = ""
         text += "=======================================\n"
         text += "   SSJ ROUGH ESTIMATE \n"
         text += "=======================================\n\n"

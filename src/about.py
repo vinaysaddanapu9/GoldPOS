@@ -1,3 +1,4 @@
+from printer_manager import is_printer_available
 import tkinter as tk
 import json
 import os
@@ -8,6 +9,7 @@ CONFIG_FILE = "config.json"
 class AboutTab:
     def __init__(self, frame):
         self.frame = frame
+        self.printer_status = None
         self.build_ui()
 
     def load_printer_name(self):
@@ -49,7 +51,6 @@ GoldPOS is a Jewellery Billing System designed for small and medium shops.
 ✔ Generates automatic receipts with unique numbers
 ✔ Maintains daily gold and cash totals
 ✔ Supports USB thermal printer printing
-✔ Supports Bluetooth printer printing
 
 Fast and Accurate Gold Exchange & Billing Software
 Designed for Jewellery Shops
@@ -113,3 +114,40 @@ Designed for Jewellery Shops
             font=("Arial", 10)
         )
         self.status_label.pack()
+
+        # Create Label FIRST
+        self.printer_status = tk.Label(
+            self.frame,
+            text="Status: Checking..."
+        )
+
+        self.printer_status.pack(pady=5)
+
+        # Then call update
+        self.update_printer_status()
+
+    def update_printer_status(self):
+
+        printer_name = self.printer_var.get().strip()
+
+        if not printer_name:
+            self.printer_status.config(
+                text="Status: No Printer Selected",
+                fg="orange"
+            )
+
+            return
+
+        if is_printer_available(printer_name):
+
+            self.printer_status.config(
+                text="Status: 🟢 Connected",
+                fg="green"
+            )
+
+        else:
+
+            self.printer_status.config(
+                text="Status: 🔴 Disconnected",
+                fg="red"
+            )
