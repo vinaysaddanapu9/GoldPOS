@@ -1,9 +1,16 @@
 from tkinter import messagebox
 import win32print
 import os
+import sys
 import json
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+def get_base_dir():
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)  # EXE folder
+    else:
+        return os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = get_base_dir()
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
 def get_printer_name():
@@ -15,19 +22,19 @@ def get_printer_name():
 
 #FOR USB PRINT
 
-#PRINTER_NAME = get_printer_name()
+PRINTER_NAME = get_printer_name()
 #PRINTER_NAME = "XP-80C (copy 4)"
 
 def print_usb(receipt_text):
 
-    printer_name = get_printer_name()
+    '''printer_name = get_printer_name()
 
     if not printer_name:
         messagebox.showerror(
             "Printer",
             "No printer configured"
         )
-        return
+        return'''
 
     if not receipt_text.strip():
 
@@ -41,7 +48,7 @@ def print_usb(receipt_text):
     try:
 
         hprinter = win32print.OpenPrinter(
-            printer_name
+            PRINTER_NAME
         )
 
         try:

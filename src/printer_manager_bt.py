@@ -20,16 +20,3 @@ def print_receipt(text):
 
     hdc.EndPage()
     hdc.EndDoc()
-
-
-receipt = """
-GOLD POS
------------------
-Item   Qty   Price
-Gold    1     5000
------------------
-TOTAL: 5000
-Thank you visit again!
-"""
-
-print_receipt(receipt)
