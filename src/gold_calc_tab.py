@@ -142,7 +142,7 @@ class GoldCalcTab:
                 p = self.safe_float(row["percent"].get())
                 pure = w * (p / 100)
 
-                text += f"{'Row '+str(i):<6}{w:>8.3f} x {p:>5}% = {pure:>8.3f}g\n"
+                text += f"{'Item '+str(i):<6}{w:>8.3f} x {p:>5}% = {pure:>8.3f}g\n"
             except:
                 pass
 
