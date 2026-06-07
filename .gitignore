@@ -12,3 +12,10 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+build/
+dist/
+
+# Runtime files
+src/daily_sales/
+src/receipt_counter.txt
