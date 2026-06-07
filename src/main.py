@@ -345,10 +345,10 @@ tk.Button(
     pady=5
 )
 
-# Print USB
+# Print
 tk.Button(
     button_frame,
-    text="Print USB",
+    text="Print Receipt",
     width=15,
     bg="#d4af37",
     fg="black",
