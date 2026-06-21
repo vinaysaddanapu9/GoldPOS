@@ -4,7 +4,6 @@ from datetime import datetime
 from printer_manager import test_print
 from receipt_manager import get_next_receipt_number
 
-
 today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 
 class GoldCalcTab:
@@ -18,9 +17,28 @@ class GoldCalcTab:
     def build_ui(self):
         tk.Label(
             self.frame,
-            text="Gold Multi-Row Calculator",
+            text="Gold Purity Calculator",
             font=("Arial", 16, "bold")
         ).pack(pady=10)
+
+        # ROW HEADERS
+        header_frame = tk.Frame(self.frame)
+        header_frame.pack()
+
+        tk.Label(
+            header_frame,
+            text="Weight (g)",
+            font=("Arial", 10, "bold"),
+            width=10
+        ).grid(row=0, column=0, padx=5)
+
+        tk.Label(
+            header_frame,
+            text="Purity %",
+            font=("Arial", 10, "bold"),
+            width=8
+        ).grid(row=0, column=1, padx=5)
+
 
         # ROW AREA
         self.row_frame = tk.Frame(self.frame)
@@ -30,31 +48,31 @@ class GoldCalcTab:
         btn_frame = tk.Frame(self.frame)
         btn_frame.pack(pady=5)
 
-        tk.Button(btn_frame, text="Add Row", width=12,
+        tk.Button(btn_frame, text="Add Item", width=12,bg="#4a90e2",fg="white",
                   command=self.add_row).grid(row=0, column=0, padx=5)
 
-        tk.Button(btn_frame, text="Calculate", width=12,
+        tk.Button(btn_frame, text="Calculate", width=12,bg="green",fg="white",
                   command=self.calculate_total).grid(row=0, column=1, padx=5)
 
-        tk.Button(btn_frame, text="Preview", width=12,
-                  bg="#4a90e2", fg="white",
-                  command=self.preview_print).grid(row=0, column=2, padx=5)
+        #tk.Button(btn_frame, text="Preview", width=12,
+                  #bg="#4a90e2", fg="white",
+                  #command=self.preview_print).grid(row=0, column=2, padx=5)
 
-        tk.Button(btn_frame, text="Print USB", width=12,
+        tk.Button(btn_frame, text="Print Receipt", width=12,
                   bg="#d4af37",
                   command=self.print_to_usb).grid(row=0, column=3, padx=5)
 
         tk.Button(btn_frame, text="Clear", width=12,
-                  bg="#ff4d4d", fg="white",
+                  bg="#C62828", fg="white",
                   command=self.clear_all).grid(row=0, column=4, padx=5)
 
         # SUBTRACTION
         sub_frame = tk.Frame(self.frame)
         sub_frame.pack(pady=10)
 
-        tk.Label(sub_frame, text="Subtraction (optional):").grid(row=0, column=0)
+        tk.Label(sub_frame, text="Less Weight (g) [optional]:",font=("Segoe UI", 10)).grid(row=0, column=0)
 
-        self.sub_entry = tk.Entry(sub_frame, width=10)
+        self.sub_entry = tk.Entry(sub_frame, width=10,font=("Segoe UI", 11))
         self.sub_entry.grid(row=0, column=1, padx=5)
         self.sub_entry.insert(0, "0")
 
@@ -62,9 +80,9 @@ class GoldCalcTab:
         rate_frame = tk.Frame(self.frame)
         rate_frame.pack(pady=5)
 
-        tk.Label(rate_frame, text="Gold Rate per gram (optional):").grid(row=0, column=0)
+        tk.Label(rate_frame, text="Rate per gram (optional):",font=("Segoe UI", 10)).grid(row=0, column=0)
 
-        self.rate_entry = tk.Entry(rate_frame, width=10)
+        self.rate_entry = tk.Entry(rate_frame, width=10,font=("Segoe UI", 11))
         self.rate_entry.grid(row=0, column=1, padx=5)
 
         # RESULT
@@ -85,11 +103,11 @@ class GoldCalcTab:
         frame = tk.Frame(self.row_frame)
         frame.pack(pady=3)
 
-        weight = tk.Entry(frame, width=10)
+        weight = tk.Entry(frame, width=11, font=("Segoe UI", 11))
         weight.grid(row=0, column=0, padx=5)
         weight.insert(0, "0")
 
-        percent = tk.Entry(frame, width=8)
+        percent = tk.Entry(frame, width=9, font=("Segoe UI", 11))
         percent.grid(row=0, column=1, padx=5)
         percent.insert(0, "80")
 
@@ -125,15 +143,20 @@ class GoldCalcTab:
 
         self.result_label.config(text=f"Final Total: {total:.3f} g")
 
-        self.last_print_text = self.build_print_text(subtotal, sub, total, rate, value)
+        receipt_no = get_next_receipt_number("GLD")
+
+        self.last_print_text = self.build_print_text(subtotal, sub, total, rate, value,receipt_no)
+
+        # Auto open preview
+        self.preview_print()
 
     # ---------------- RECEIPT ---------------- #
-    def build_print_text(self, subtotal, sub, total, rate, value):
+    def build_print_text(self, subtotal, sub, total, rate, value,receipt_no):
         text = ""
         text += "=======================================\n"
         text += "   SSJ ROUGH ESTIMATE \n"
         text += "=======================================\n\n"
-        text += "Receipt No : " + get_next_receipt_number("GLD") + "\n"
+        text += "Receipt No : " + receipt_no + "\n"
         text += "Date : " + today + "\n\n"
 
         for i, row in enumerate(self.rows, start=1):
@@ -157,8 +180,8 @@ class GoldCalcTab:
 
         # OPTIONAL GOLD VALUE
         if rate > 0:
-            text += f"{'Gold Rate':<18}: {rate:>10.2f} /g\n"
-            text += f"{'Total Value':<18}: {value:>10.2f}\n"
+            text += f"{'Gold Rate':<18}: {rate:>15,.2f} /g\n"
+            text += f"{'Total Value':<18}: {value:>15,.2f}\n"
 
         text += "====================================\n"
         text += "     Thank You! Visit Again! \n"

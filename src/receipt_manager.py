@@ -1,7 +1,18 @@
 import os
+import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RECEIPT_FILE = os.path.join(BASE_DIR, "receipt_counter.txt")
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+
+RECEIPT_FILE = os.path.join(
+    PROJECT_DIR,
+    "data",
+    "receipt_counter.txt"
+)
 
 # ---------------- RECEIPT NUMBER ---------------- #
 def get_next_receipt_number(receipt_type):

@@ -5,7 +5,6 @@ from datetime import datetime
 from tabs import AppTabs
 from about import AboutTab
 from printer_manager import test_print
-from gold_rate_widget import create_gold_rate_ui
 from gold_calc_tab import GoldCalcTab
 from receipt_manager import get_next_receipt_number
 import ctypes
@@ -18,7 +17,7 @@ from daily_totals import (
 
 # Global receipt text
 latest_receipt = ""
-RECEIPT_FILE = "receipt_counter.txt"
+RECEIPT_FILE = "../data/receipt_counter.txt"
 
 # Prevent duplicate calculate clicks
 last_values = None
@@ -34,9 +33,10 @@ def calculate_and_show():
     try:
         impure_weight = float(entry_weight.get())
         purity_percent = float(entry_purity.get())
-        rate = float(entry_rate.get())
+        rate_text = entry_rate.get().strip()
+        rate = float(rate_text) if rate_text else 0
 
-        if impure_weight <= 0 or purity_percent <= 0 or rate <= 0:
+        if impure_weight <= 0 or purity_percent <= 0:
             messagebox.showerror(
                 "Error",
                 "Values must be greater than 0"
@@ -58,7 +58,7 @@ def calculate_and_show():
             purity_percent / 100
         )
 
-        price = pure_weight * rate
+        price = pure_weight * rate if rate > 0 else 0
 
         # Daily totals
         update_daily_totals(
@@ -69,11 +69,11 @@ def calculate_and_show():
         total_gold, total_cash = get_daily_totals()
 
         total_gold_label.config(
-            text=f"Today's Gold Exchange : {total_gold:.3f} g"
+            text=f"Gold Exchanged Today : {total_gold:.3f} g"
         )
 
         total_cash_label.config(
-            text=f"Today's Cash : ₹ {total_cash:.2f}"
+            text=f"Cash Paid Today : ₹ {total_cash:,.2f}"
         )
 
         receipt_no = get_next_receipt_number("EXC")
@@ -81,6 +81,15 @@ def calculate_and_show():
         today = datetime.now().strftime(
             "%d-%m-%Y %I:%M:%S %p"
         )
+
+        receipt_rate_section = ""
+
+        if rate > 0:
+            receipt_rate_section = f"""
+Rate/Gram  : Rs. {rate:,.2f}
+
+TOTAL      : Rs. {price:,.2f}
+"""
 
         latest_receipt = f"""
 ================================
@@ -95,11 +104,7 @@ Impure Wt  : {impure_weight:.3f} g
 Purity     : {purity_percent:.2f} %
 
 Pure Gold  : {pure_weight:.3f} g
-
-Rate/Gram  : Rs. {rate:.2f}
-
-TOTAL      : Rs. {price:.2f}
-
+{receipt_rate_section}
 ================================
    Thank You! Visit Again!
    Powered by GoldPOS
@@ -145,10 +150,13 @@ def clear_entries():
 
     entry_weight.focus()
 
-
 # ---------------- EXIT ---------------- #
 def exit_app():
-    root.destroy()
+    if messagebox.askyesno(
+            "Exit GoldPOS",
+            "Are you sure you want to exit?"
+    ):
+        root.destroy()
 
 # ---------------- MAIN WINDOW ---------------- #
 myapp_id = "GoldPOS.app.v1"
@@ -160,9 +168,9 @@ icon_path = os.path.abspath("GoldPOS.ico")
 style = ttk.Style()
 style.theme_use("clam")
 
-root.title("GoldPOS v0.0.1")
+root.title("GoldPOS v0.1.5")
 root.iconbitmap(icon_path)
-root.geometry("520x650")
+root.geometry("520x680")
 
 root.configure(bg="#f8f5ef")
 root.resizable(False, False)
@@ -173,16 +181,38 @@ home = app.home_tab
 gold_calc = GoldCalcTab(app.gold_calc_tab)
 about = AboutTab(app.about)
 
-# ---------------- LIVE GOLD RATE ---------------- #
-create_gold_rate_ui(home)
+tk.Label(
+    home,
+    text="Welcome to GoldPOS",
+    font=("Segoe UI", 14, "bold"),
+    bg="#f8f5ef",
+    fg="#333333"
+).pack(pady=(15, 10))
+
+#FOOTER
+footer = tk.Label(
+    root,
+    text="GoldPOS v0.1.5 | Ready",
+    bd=1,
+    relief=tk.SUNKEN,
+    anchor="w",
+    padx=10,
+    font=("Segoe UI", 8),  # normal font
+    fg="black"
+)
+
+footer.pack(
+    side=tk.BOTTOM,
+    fill=tk.X
+)
 
 # ---------------- TOTALS ---------------- #
 total_gold, total_cash = get_daily_totals()
 
 total_gold_label = tk.Label(
     home,
-    text=f"Today's Gold Exchange : {total_gold:.3f} g",
-    font=("Segoe UI", 11, "bold"),
+    text=f"Gold Exchanged Today : {total_gold:.3f} g",
+    font=("Segoe UI", 10, "bold"),
     bg="#f4f1ea",
     fg="#333333"
 )
@@ -191,8 +221,8 @@ total_gold_label.pack()
 
 total_cash_label = tk.Label(
     home,
-    text=f"Today's Cash : ₹ {total_cash:.2f}",
-    font=("Segoe UI", 11, "bold"),
+    text=f"Cash Paid Today : ₹ {total_cash:,.2f}",
+    font=("Segoe UI", 10, "bold"),
     bg="#f4f1ea",
     fg="green"
 )
@@ -208,7 +238,6 @@ input_frame = tk.Frame(
 )
 
 input_frame.pack(pady=10)
-
 
 # Weight
 tk.Label(
@@ -262,11 +291,10 @@ entry_purity.grid(
     padx=10
 )
 
-
 # Rate
 tk.Label(
     input_frame,
-    text="Rate per Gram",
+    text="Rate per Gram (Optional)",
     font=("Segoe UI", 11),
     bg="#f8f5ef"
 ).grid(
@@ -306,7 +334,6 @@ entry_rate.bind(
 )
 
 entry_weight.focus()
-
 
 # ---------------- BUTTONS ---------------- #
 button_frame = tk.Frame(
@@ -409,7 +436,7 @@ scrollbar.pack(
 receipt_box = tk.Text(
     receipt_frame,
     width=60,
-    height=20,
+    height=12,
     bg="#fffdf8",
     font=("Courier New", 10),
     yscrollcommand=scrollbar.set,

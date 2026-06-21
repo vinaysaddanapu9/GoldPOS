@@ -36,25 +36,30 @@ class AboutTab:
             text="Printer name saved successfully"
         )
 
+        self.selected_printer_label.config(
+            text=f"Selected Printer: {printer_name}"
+        )
+
+        # Refresh printer status
+        self.update_printer_status()
+
     def build_ui(self):
         tk.Label(
             self.frame,
-            text="About GoldPOS",
-            font=("Arial", 20, "bold")
+            text="About",
+            font=("Arial", 18, "bold")
         ).pack(pady=10)
 
         text = """
-GoldPOS is a Jewellery Billing System designed for small and medium shops.
+Jewellery Billing & Gold Exchange Software
 
-✔ Performs gold exchange calculations
-✔ Calculates pure gold weight based on purity
-✔ Generates automatic receipts with unique numbers
-✔ Maintains daily gold and cash totals
-✔ Supports USB thermal printer printing
+✔ Gold Exchange Calculation
+✔ Gold Purity Calculation
+✔ Receipt Printing
+✔ Printer Configuration
 
-Fast and Accurate Gold Exchange & Billing Software
-Designed for Jewellery Shops
-        """
+Fast • Accurate • Simple
+"""
 
         tk.Label(
             self.frame,
@@ -66,7 +71,7 @@ Designed for Jewellery Shops
 
         tk.Label(
             self.frame,
-            text="Version 0.0.1",
+            text="Version 0.1.5",
             font=("Arial", 10, "bold")
         ).pack(pady=5)
 
@@ -115,10 +120,21 @@ Designed for Jewellery Shops
         )
         self.status_label.pack()
 
+        # Selected Printer Label
+        self.selected_printer_label = tk.Label(
+            self.frame,
+            text=f"Selected Printer: {self.load_printer_name()}",
+            font=("Segoe UI", 10)
+        )
+
+        self.selected_printer_label.pack(pady=3)
+
+
         # Create Label FIRST
         self.printer_status = tk.Label(
             self.frame,
-            text="Status: Checking..."
+            text="Printer Status: Checking...",
+            font = ("Segoe UI", 10, "bold")
         )
 
         self.printer_status.pack(pady=5)
@@ -126,13 +142,20 @@ Designed for Jewellery Shops
         # Then call update
         self.update_printer_status()
 
+        tk.Label(
+            self.frame,
+            text="© 2026 GoldPOS",
+            fg="#555555",
+            font=("Segoe UI", 9, "bold")
+        ).pack(side="bottom", pady=10)
+
     def update_printer_status(self):
 
         printer_name = self.printer_var.get().strip()
 
         if not printer_name:
             self.printer_status.config(
-                text="Status: No Printer Selected",
+                text="Printer Status: Not Configured",
                 fg="orange"
             )
 
@@ -141,13 +164,13 @@ Designed for Jewellery Shops
         if is_printer_available(printer_name):
 
             self.printer_status.config(
-                text="Status: 🟢 Connected",
+                text="Printer Status: Connected",
                 fg="green"
             )
 
         else:
 
             self.printer_status.config(
-                text="Status: 🔴 Disconnected",
+                text="Printer Status: Disconnected",
                 fg="red"
             )

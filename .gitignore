@@ -17,5 +17,5 @@ build/
 dist/
 
 # Runtime files
-src/daily_sales/
-src/receipt_counter.txt
+data/daily_sales/
+data/receipt_counter.txt

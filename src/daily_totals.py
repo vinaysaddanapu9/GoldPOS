@@ -1,13 +1,24 @@
 import os
+import sys
 from datetime import datetime
 
 # Folder
-DAILY_FOLDER = "daily_sales"
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Create folder if missing
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+
+DAILY_FOLDER = os.path.join(
+    PROJECT_DIR,
+    "data",
+    "daily_sales"
+)
+
+# Create folder if it doesn't exist
 if not os.path.exists(DAILY_FOLDER):
     os.makedirs(DAILY_FOLDER)
-
 
 def get_today_file():
     today = datetime.now().strftime("%Y-%m-%d")
