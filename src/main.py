@@ -170,7 +170,7 @@ style.theme_use("clam")
 
 root.title("GoldPOS v0.1.5")
 root.iconbitmap(icon_path)
-root.geometry("580x720")
+root.geometry("520x680")
 
 root.configure(bg="#f8f5ef")
 root.resizable(False, False)
