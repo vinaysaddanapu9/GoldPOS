@@ -1,3 +1,5 @@
 {
-    "printer_name": "XP-80C (copy 4)"
+    "printer_name": "XP-80C (copy 4)",
+    "less_points": 20,
+    "auto_clear": true
 }

@@ -110,21 +110,6 @@ def print_usb(receipt_text):
 
 
 def test_print(receipt_data):
-
-    sample = """
-    ========================
-           GOLDPOS
-    ========================
-
-    Printer Test
-
-    GoldPOS v0.1.0
-
-    Printer Working OK
-
-    ========================
-    """
-
     print_usb(receipt_data)
 
 def print_bt(receipt_text):
