@@ -5,10 +5,10 @@ from datetime import datetime
 from tabs import AppTabs
 from settings import SettingsTab
 from about import AboutTab
-from printer_manager import test_print
+from printer_manager import test_print, is_auto_clear_enabled
 from gold_calc_tab import GoldCalcTab
 from receipt_manager import get_next_receipt_number
-from utils import load_less_points, configure_main_window
+from utils import load_less_points, configure_main_window,ensure_config_exists
 import ctypes
 import os
 
@@ -168,6 +168,27 @@ def clear_exchange_entries():
     latest_receipt = ""
 
     entry_weight.focus()
+
+# ---------------- PRINT_EXCHANGE_RECEIPT ---------------- #
+def print_exchange_receipt():
+    if not latest_receipt:
+        messagebox.showwarning(
+            "Warning",
+            "Please calculate first"
+        )
+        return
+
+    try:
+        test_print(latest_receipt)
+
+        if is_auto_clear_enabled():
+            clear_exchange_entries()
+
+    except Exception:
+        messagebox.showerror(
+            "Error",
+            "Printer not connected"
+        )
 
 # ---------------- EXIT ---------------- #
 def exit_app():
@@ -399,7 +420,7 @@ tk.Button(
     bg="#d4af37",
     fg="black",
     font=("Arial", 10, "bold"),
-    command=lambda: test_print(latest_receipt)
+    command=print_exchange_receipt
 ).grid(
     row=1,
     column=0,

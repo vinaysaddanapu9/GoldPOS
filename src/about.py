@@ -15,7 +15,7 @@ class AboutTab:
             self.frame,
             text="GoldPOS",
             font=("Arial", 24, "bold"),
-            fg="#B8860B"
+            fg="black"
         ).pack(pady=(30, 5))
 
 

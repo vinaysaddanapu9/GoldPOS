@@ -134,3 +134,12 @@ def is_printer_available(printer_name=None):
 
     except Exception:
         return False
+
+    
+def is_auto_clear_enabled():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("auto_clear", False)
+
+    return False

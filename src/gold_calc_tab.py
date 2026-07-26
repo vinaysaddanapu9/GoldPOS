@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
-from printer_manager import test_print
+from printer_manager import test_print, is_auto_clear_enabled
 from receipt_manager import get_next_receipt_number
 
 today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
@@ -196,6 +196,10 @@ class GoldCalcTab:
 
         try:
             test_print(self.last_print_text)
+
+            if is_auto_clear_enabled():
+                self.clear_gold_calc_all()
+
         except:
             messagebox.showerror("Error", "Printer not connected")
 

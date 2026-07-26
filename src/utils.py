@@ -1,9 +1,55 @@
 import tkinter as tk
 import json
+import os
+import sys
 
-CONFIG_FILE = "config.json"
+def get_base_dir():
+    if getattr(sys, "frozen", False):
+        # Running as EXE
+        return os.path.dirname(sys.executable)
+    else:
+        # Running from source
+        return os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = get_base_dir()
+CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
+
+DEFAULT_CONFIG = {
+    "printer_name": "",
+    "less_points": 20,
+    "auto_clear": False
+}
+
+def ensure_config_exists():
+    """
+    Creates config.json with default values if it doesn't exist.
+    Also adds any missing keys for older config files.
+    """
+
+    if not os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(DEFAULT_CONFIG, f, indent=4)
+        return DEFAULT_CONFIG
+
+    with open(CONFIG_FILE, "r") as f:
+        config = json.load(f)
+
+    updated = False
+
+    for key, value in DEFAULT_CONFIG.items():
+        if key not in config:
+            config[key] = value
+            updated = True
+
+    if updated:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(config, f, indent=4)
+
+    return config
 
 def load_less_points():
+    ensure_config_exists()
+
     with open(CONFIG_FILE, "r") as f:
         config = json.load(f)
     return config["less_points"]
