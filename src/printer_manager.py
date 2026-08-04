@@ -110,21 +110,6 @@ def print_usb(receipt_text):
 
 
 def test_print(receipt_data):
-
-    sample = """
-    ========================
-           GOLDPOS
-    ========================
-
-    Printer Test
-
-    GoldPOS v0.1.0
-
-    Printer Working OK
-
-    ========================
-    """
-
     print_usb(receipt_data)
 
 def print_bt(receipt_text):
@@ -149,3 +134,12 @@ def is_printer_available(printer_name=None):
 
     except Exception:
         return False
+
+    
+def is_auto_clear_enabled():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("auto_clear", False)
+
+    return False

@@ -3,12 +3,15 @@ from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
 from tabs import AppTabs
+from settings import SettingsTab
 from about import AboutTab
-from printer_manager import test_print
+from printer_manager import test_print, is_auto_clear_enabled
 from gold_calc_tab import GoldCalcTab
 from receipt_manager import get_next_receipt_number
+from utils import load_less_points, configure_main_window,ensure_config_exists
 import ctypes
 import os
+
 
 from daily_totals import (
     update_daily_totals,
@@ -25,6 +28,7 @@ last_values = None
 def get_receipt_text():
     return receipt_box.get("1.0", "end-1c")
 
+less_points = load_less_points()
 
 # ---------------- CALCULATE ---------------- #
 def calculate_and_show():
@@ -54,8 +58,14 @@ def calculate_and_show():
             return
 
         # Calculations
+        effective_purity = purity_percent
+
+        # Apply less points only for Exchange (no cash rate entered)
+        if rate <= 0:
+            effective_purity -= (less_points / 100)
+
         pure_weight = impure_weight * (
-            purity_percent / 100
+                effective_purity / 100
         )
 
         price = pure_weight * rate if rate > 0 else 0
@@ -82,6 +92,17 @@ def calculate_and_show():
             "%d-%m-%Y %I:%M:%S %p"
         )
 
+        # Receipt purity section
+        receipt_purity_section = (
+            f"{'Purity':<11}: {purity_percent:.2f} %\n"
+        )
+
+        if rate <= 0:
+            receipt_purity_section += (
+                f"{'Less Points':<11}: {less_points / 100:.2f}\n"
+                f"{'Net Purity':<11}: {effective_purity:.2f} %\n"
+            )
+
         receipt_rate_section = ""
 
         if rate > 0:
@@ -101,9 +122,7 @@ Receipt No : {receipt_no}
 Date       : {today}
 
 Impure Wt  : {impure_weight:.3f} g
-Purity     : {purity_percent:.2f} %
-
-Pure Gold  : {pure_weight:.3f} g
+{receipt_purity_section}Pure Gold  : {pure_weight:.3f} g
 {receipt_rate_section}
 ================================
    Thank You! Visit Again!
@@ -133,7 +152,7 @@ Pure Gold  : {pure_weight:.3f} g
 
 
 # ---------------- CLEAR ---------------- #
-def clear_entries():
+def clear_exchange_entries():
     global latest_receipt, last_values
 
     last_values = None
@@ -149,6 +168,27 @@ def clear_entries():
     latest_receipt = ""
 
     entry_weight.focus()
+
+# ---------------- PRINT_EXCHANGE_RECEIPT ---------------- #
+def print_exchange_receipt():
+    if not latest_receipt:
+        messagebox.showwarning(
+            "Warning",
+            "Please calculate first"
+        )
+        return
+
+    try:
+        test_print(latest_receipt)
+
+        if is_auto_clear_enabled():
+            clear_exchange_entries()
+
+    except Exception:
+        messagebox.showerror(
+            "Error",
+            "Printer not connected"
+        )
 
 # ---------------- EXIT ---------------- #
 def exit_app():
@@ -168,17 +208,17 @@ icon_path = os.path.abspath("GoldPOS.ico")
 style = ttk.Style()
 style.theme_use("clam")
 
-root.title("GoldPOS v0.1.5")
+root.title("GoldPOS v0.1.6")
 root.iconbitmap(icon_path)
-root.geometry("520x680")
 
 root.configure(bg="#f8f5ef")
-root.resizable(False, False)
+configure_main_window(root)
 
 # Load tabs
 app = AppTabs(root)
 home = app.home_tab
 gold_calc = GoldCalcTab(app.gold_calc_tab)
+settings = SettingsTab(app.settings_tab)
 about = AboutTab(app.about)
 
 tk.Label(
@@ -192,7 +232,7 @@ tk.Label(
 #FOOTER
 footer = tk.Label(
     root,
-    text="GoldPOS v0.1.5 | Ready",
+    text="GoldPOS v0.1.6 | Ready",
     bd=1,
     relief=tk.SUNKEN,
     anchor="w",
@@ -364,7 +404,7 @@ tk.Button(
     text="Clear",
     width=15,
     font=("Arial", 10, "bold"),
-    command=clear_entries
+    command=clear_exchange_entries
 ).grid(
     row=0,
     column=1,
@@ -380,7 +420,7 @@ tk.Button(
     bg="#d4af37",
     fg="black",
     font=("Arial", 10, "bold"),
-    command=lambda: test_print(latest_receipt)
+    command=print_exchange_receipt
 ).grid(
     row=1,
     column=0,

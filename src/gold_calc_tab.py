@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
-from printer_manager import test_print
+from printer_manager import test_print, is_auto_clear_enabled
 from receipt_manager import get_next_receipt_number
 
 today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
@@ -64,7 +64,7 @@ class GoldCalcTab:
 
         tk.Button(btn_frame, text="Clear", width=12,
                   bg="#C62828", fg="white",
-                  command=self.clear_all).grid(row=0, column=4, padx=5)
+                  command=self.clear_gold_calc_all).grid(row=0, column=4, padx=5)
 
         # SUBTRACTION
         sub_frame = tk.Frame(self.frame)
@@ -135,8 +135,6 @@ class GoldCalcTab:
             subtotal += w * (p / 100)
 
         total = subtotal - sub
-        if total < 0:
-            total = 0
 
         rate = self.safe_float(self.rate_entry.get())
         value = total * rate if rate > 0 else None
@@ -198,6 +196,10 @@ class GoldCalcTab:
 
         try:
             test_print(self.last_print_text)
+
+            if is_auto_clear_enabled():
+                self.clear_gold_calc_all()
+
         except:
             messagebox.showerror("Error", "Printer not connected")
 
@@ -230,7 +232,7 @@ class GoldCalcTab:
         text_box.config(state=tk.DISABLED)
 
     # ---------------- CLEAR ---------------- #
-    def clear_all(self):
+    def clear_gold_calc_all(self):
         for widget in self.row_frame.winfo_children():
             widget.destroy()
 
