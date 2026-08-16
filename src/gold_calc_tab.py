@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
-from printer_manager import test_print, is_auto_clear_enabled
-from receipt_manager import get_next_receipt_number
+from .printer_manager import test_print, is_auto_clear_enabled
+from .receipt_manager import get_next_receipt_number
 
 today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 

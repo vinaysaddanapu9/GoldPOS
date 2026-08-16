@@ -1,4 +1,4 @@
-from printer_manager import is_printer_available
+from .printer_manager import is_printer_available
 import tkinter as tk
 import json
 import os

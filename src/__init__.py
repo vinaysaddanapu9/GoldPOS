@@ -1,0 +1,1 @@
+# GoldPOS source package

@@ -1,4 +1,3 @@
-import tkinter as tk
 import json
 import os
 import sys
@@ -8,8 +7,10 @@ def get_base_dir():
         # Running as EXE
         return os.path.dirname(sys.executable)
     else:
-        # Running from source
-        return os.path.dirname(os.path.abspath(__file__))
+        # Running from source → go to project root
+        return os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))
+        )
 
 BASE_DIR = get_base_dir()
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
@@ -78,5 +79,13 @@ def set_window_size(root, max_width=1000, max_height=650):
 def configure_main_window(root):
     set_window_size(root)
 
-    root.resizable(True, True)
-    root.title("GoldPOS v0.1.6")
+    root.resizable(False, False)
+    root.title("GoldPOS v0.1.7")
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS   # PyInstaller temp folder
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
