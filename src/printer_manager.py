@@ -22,7 +22,7 @@ def get_printer_name():
 
 #FOR USB PRINT
 
-PRINTER_NAME = get_printer_name()
+printer_name = get_printer_name()
 #PRINTER_NAME = "XP-80C (copy 4)"
 
 def print_usb(receipt_text):
@@ -48,7 +48,7 @@ def print_usb(receipt_text):
     try:
 
         hprinter = win32print.OpenPrinter(
-            PRINTER_NAME
+            printer_name
         )
 
         try:
@@ -112,30 +112,40 @@ def print_usb(receipt_text):
 def test_print(receipt_data):
     print_usb(receipt_data)
 
-def print_bt(receipt_text):
-    print_usb(receipt_text)
+# ============================================================
+# PRINTER DISCOVERY
+# ============================================================
+
+def get_available_printers():
+    """
+    Return list of installed/connected Windows printers.
+    """
+
+    try:
+        printers = win32print.EnumPrinters(
+            win32print.PRINTER_ENUM_LOCAL
+            | win32print.PRINTER_ENUM_CONNECTIONS
+        )
+
+        return [printer[2] for printer in printers]
+
+    except Exception:
+        return []
 
 
 def is_printer_available(printer_name=None):
+    """
+    Check whether the configured printer exists.
+    """
 
     if not printer_name:
         printer_name = get_printer_name()
 
-    try:
-        printers = [
-            p[2]
-            for p in win32print.EnumPrinters(
-                win32print.PRINTER_ENUM_LOCAL
-                | win32print.PRINTER_ENUM_CONNECTIONS
-            )
-        ]
-
-        return printer_name in printers
-
-    except Exception:
+    if not printer_name:
         return False
 
-    
+    return printer_name in get_available_printers()
+
 def is_auto_clear_enabled():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "r") as f:
