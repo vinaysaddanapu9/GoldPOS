@@ -7,7 +7,7 @@ REM Go to project folder
 cd /d %~dp0src
 
 REM Build EXE
-python -m pyinstaller --onefile --windowed --name GoldPOS --icon=assets\goldpos.ico src\main.py
+python -m pyinstaller --onefile --windowed --name GoldPOS --icon=assets\goldpos.ico main.py
 
 REM Create portable folder
 cd ..
