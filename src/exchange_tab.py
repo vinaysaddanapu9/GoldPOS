@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 from .printer_manager import test_print, is_auto_clear_enabled
 from .receipt_manager import get_next_receipt_number
-from .utils import load_less_points
+from .utils import load_less_points, load_organization_name
 from .daily_totals import update_daily_totals, get_daily_totals
 
 class ExchangeTab:
@@ -14,6 +14,7 @@ class ExchangeTab:
         self.latest_receipt = ""
         self.last_values = None
         self.less_points = load_less_points()
+        self.organization_name = load_organization_name()
 
         self.build_ui()
 
@@ -329,6 +330,8 @@ class ExchangeTab:
                 "%d-%m-%Y %I:%M %p"
             )
 
+            organization_name = load_organization_name()
+
             # ---------- RECEIPT PURITY SECTION ----------
             receipt_purity_section = (
                 f"{'Purity':<11}: {purity_percent:.2f} %\n"
@@ -353,8 +356,8 @@ class ExchangeTab:
             # ---------- FINAL RECEIPT ----------
             latest_receipt = (
                 "================================\n"
-                "             SSJ              \n"
-                "        GOLD EXCHANGE         \n"
+                f"{self.organization_name:^32}\n"
+                "        ROUGH ESTIMATE         \n"
                 "================================\n\n"
                 f"{'Receipt No':<12}: {receipt_no}\n"
                 f"{'Date':<12}: {today}\n"

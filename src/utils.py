@@ -18,7 +18,8 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 DEFAULT_CONFIG = {
     "printer_name": "",
     "less_points": 20,
-    "auto_clear": False
+    "auto_clear": False,
+    "organization_name": ""
 }
 
 def ensure_config_exists():
@@ -54,6 +55,13 @@ def load_less_points():
     with open(CONFIG_FILE, "r") as f:
         config = json.load(f)
     return config["less_points"]
+
+def load_organization_name():
+    ensure_config_exists()
+
+    with open(CONFIG_FILE, "r") as f:
+        config = json.load(f)
+    return config["organization_name"]
 
 def set_window_size(root, max_width=1000, max_height=650):
     """

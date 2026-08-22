@@ -18,6 +18,13 @@ class SettingsTab:
                 return data.get("printer_name", "")
         return ""
 
+    def load_organization_name(self):
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("organization_name", "SSJ")
+        return "SSJ"
+
     def load_less_points(self):
         if os.path.exists(CONFIG_FILE):
             with open(CONFIG_FILE, "r") as f:
@@ -31,6 +38,25 @@ class SettingsTab:
                 data = json.load(f)
                 return data.get("auto_clear", False)
         return False
+
+    def save_organization(self):
+        organization_name = self.organization_var.get().strip()
+
+        data = {}
+
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, "r") as f:
+                data = json.load(f)
+
+        data["organization_name"] = organization_name
+
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(data, f, indent=4)
+
+        self.status_label.config(
+            text="Organization name saved successfully",
+            fg="green"
+        )
 
     def save_printer_name(self):
         printer_name = self.printer_var.get().strip()
@@ -75,6 +101,38 @@ class SettingsTab:
         )
 
     def build_ui(self):
+        # ==========================
+        # Organization Settings
+        # ==========================
+
+        tk.Label(
+            self.frame,
+            text="Organization Name",
+            font=("Arial", 11, "bold")
+        ).pack(pady=(10, 5))
+
+        self.organization_var = tk.StringVar(
+            value=self.load_organization_name()
+        )
+
+        tk.Entry(
+            self.frame,
+            textvariable=self.organization_var,
+            width=40,
+            font=("Arial", 11)
+        ).pack(pady=5)
+
+        tk.Button(
+            self.frame,
+            text="Save Organization",
+            command=self.save_organization,
+            bg="green",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            width=18
+        ).pack(pady=(5, 15))
+
+
         # ==========================
         # Exchange Settings
         # ==========================
