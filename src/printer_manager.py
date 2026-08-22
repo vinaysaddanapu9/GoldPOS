@@ -135,7 +135,7 @@ def get_available_printers():
 
 def is_printer_available(printer_name=None):
     """
-    Check whether the configured printer exists.
+    Check whether the configured printer exists and is ready.
     """
 
     if not printer_name:
@@ -144,7 +144,21 @@ def is_printer_available(printer_name=None):
     if not printer_name:
         return False
 
-    return printer_name in get_available_printers()
+    try:
+        handle = win32print.OpenPrinter(printer_name)
+
+        try:
+            info = win32print.GetPrinter(handle, 2)
+            status = info["Status"]
+
+            # 0 = ready / no reported error
+            return status == 0
+
+        finally:
+            win32print.ClosePrinter(handle)
+
+    except Exception:
+        return False
 
 def is_auto_clear_enabled():
     if os.path.exists(CONFIG_FILE):

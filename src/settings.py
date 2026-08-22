@@ -55,7 +55,7 @@ class SettingsTab:
 
         self.status_label.config(
             text="Organization name saved successfully",
-            fg="green"
+            fg="Blue"
         )
 
     def save_printer_name(self):
@@ -97,7 +97,7 @@ class SettingsTab:
 
         self.status_label.config(
             text="Exchange settings saved successfully",
-            fg="green"
+            fg="#6A1B9A"
         )
 
     def build_ui(self):

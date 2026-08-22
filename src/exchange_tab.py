@@ -164,6 +164,20 @@ class ExchangeTab:
             ipady=6
         )
 
+        # Keyboard navigation
+        self.entry_weight.bind(
+            "<Return>",
+            lambda event: self.entry_purity.focus_set()
+        )
+        self.entry_purity.bind(
+            "<Return>",
+            lambda event: self.entry_rate.focus_set()
+        )
+        self.entry_rate.bind(
+            "<Return>",
+            lambda event: self.calculate_and_show()
+        )
+
         # ================= BUTTON FRAME =================
         # ---------- BUTTONS ----------
         button_container = tk.Frame(self.left_frame, bg="#f8f5ef")
@@ -262,6 +276,8 @@ class ExchangeTab:
         self.receipt_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.receipt_box.yview)
 
+        # Bold style for important receipt lines
+        self.receipt_box.tag_configure("bold",font=("Consolas", 11, "bold"))
         self.receipt_box.config(state=tk.DISABLED)
 
     # ---------------- CALCULATE ---------------- #
@@ -379,6 +395,23 @@ class ExchangeTab:
                 tk.END,
                 latest_receipt
             )
+
+            # Make important receipt lines bold
+            for text in ["Pure Gold", "TOTAL"]:
+                start = self.receipt_box.search(
+                    text,
+                    "1.0",
+                    tk.END
+                )
+
+                if start:
+                    end = f"{start} lineend"
+                    self.receipt_box.tag_add(
+                        "bold",
+                        start,
+                        end
+                    )
+
             self.receipt_box.config(state=tk.DISABLED)
 
             # remember last calculation
