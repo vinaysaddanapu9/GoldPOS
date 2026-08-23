@@ -3,6 +3,7 @@ from tkinter import messagebox
 from datetime import datetime
 from .printer_manager import test_print, is_auto_clear_enabled
 from .receipt_manager import get_next_receipt_number
+from .utils import load_organization_name
 
 today = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 
@@ -11,6 +12,8 @@ class GoldCalcTab:
         self.frame = frame
         self.rows = []
         self.last_print_text = ""
+        self.organization_name = load_organization_name()
+
         self.build_ui()
 
     # ---------------- UI ---------------- #
@@ -152,7 +155,8 @@ class GoldCalcTab:
     def build_print_text(self, subtotal, sub, total, rate, value,receipt_no):
         text = ""
         text += "=======================================\n"
-        text += "   SSJ ROUGH ESTIMATE \n"
+        text += f"{self.organization_name:^39}\n"
+        text += f"{'ROUGH ESTIMATE':^39}\n"
         text += "=======================================\n\n"
         text += "Receipt No : " + receipt_no + "\n"
         text += "Date : " + today + "\n\n"

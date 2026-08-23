@@ -58,7 +58,7 @@ def print_usb(receipt_text):
                 1,
                 (
                     "GoldPOS Receipt",
-                    None,
+                    "",
                     "RAW"
                 )
             )
