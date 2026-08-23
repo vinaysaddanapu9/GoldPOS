@@ -290,11 +290,28 @@ class ExchangeTab:
             rate_text = self.entry_rate.get().strip()
             rate = float(rate_text) if rate_text else 0
 
-            if impure_weight <= 0 or purity_percent <= 0:
+            if impure_weight <= 0:
                 messagebox.showerror(
-                    "Error",
-                    "Values must be greater than 0"
+                    "Invalid Weight",
+                    "Weight must be greater than 0."
                 )
+                self.entry_weight.focus_set()
+                return
+
+            if purity_percent <= 0 or purity_percent > 100:
+                messagebox.showerror(
+                    "Invalid Purity",
+                    "Purity must be between 0 and 100."
+                )
+                self.entry_purity.focus_set()
+                return
+
+            if rate < 0:
+                messagebox.showerror(
+                    "Invalid Rate",
+                    "Rate cannot be negative."
+                )
+                self.entry_rate.focus_set()
                 return
 
             current_values = (
